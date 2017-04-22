@@ -96,7 +96,7 @@ def list_notifications():
 def new_notification():
     valid_from = datetime.strptime(request.form['valid_from'], date_fmt)
     valid_to = datetime.strptime(request.form['valid_to'], date_fmt)
-    new_notification = Notification(summary=request.form['summary'], description=request.form['description'], valid_from=valid_from, valid_to=valid_to)
+    new_notification = Notification(summary=request.form['summary'], description=request.form['description'], valid_from=valid_from, valid_to=valid_to, location=request.form['location'])
     new_notification.insert()
     return redirect(url_for('list_notifications'))
 
