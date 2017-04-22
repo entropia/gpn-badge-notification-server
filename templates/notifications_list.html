@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Notification List</h2>
+<form action="{{ url_for('new_notification') }}" method=post>
+  <dl>
+      <dt>Summary:</dt>
+      <dd><input type="text" size=30 name="summary"></dd>
+      <dt>Description:</dt>
+      <dd><textarea name="description" rows=5 cols=40></textarea></dd>
+      <dt>Location:</dt>
+      <dd><input type="text" name="Location" size=30></input></dd>
+      <dt>Valid from:</dt>
+      <dd><input type="text" size=30 name="valid_from" value="{{ current_time }}"></dd>
+      <dt>Valid to:</dt>
+      <dd><input type="text" size=30 name="valid_to" value="{{ current_time }}"></dd>
+      <dd><input type="submit" value="Add"></dd>
+  </dl>
+</form>
+<ul class=entries>
+{% for noti in notifications %}
+<li>
+    <h3>{{ noti.summary|safe }}</h3>
+    <em>Valid: {{ noti.valid_from }} - {{ noti.valid_to }}</em><br/>
+    <em>Location: {{ noti.location|safe }}</em>
+    <p>
+    {{ noti.description|safe }}
+    </p>
+    <form action="{{ url_for('delete_notification') }}" method=post>
+      <dl>
+          <input type="hidden" name="id" value="{{ noti.id }}">
+          <dd><input type="submit" value="Delete"></dd>
+      </dl>
+    </form>
+</li>
+{% else %}
+<li><em>Unbelievable.  No notifications so far</em></li>
+{% endfor %}
+</ul>
+{% endblock %}
+
