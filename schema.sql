@@ -1,6 +1,7 @@
+DROP TABLE IF EXISTS notifications;
 CREATE TABLE notifications
 (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id SERIAL PRIMARY KEY NOT NULL,
     summary VARCHAR(255) NOT NULL,
     description TEXT,
     location VARCHAR(255),
