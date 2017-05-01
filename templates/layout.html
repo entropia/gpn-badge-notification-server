@@ -6,8 +6,18 @@
 </head>
 <body>
 <div class=page>
-  <h1>Gulasch Push Notifier</h1>
-  {% block body %}{% endblock %}
+    <p>
+    {% if current_user.is_authenticated %}
+    Hi {{ current_user.name }}!
+
+    <form action="{{ url_for('logout') }}" method=post>
+        <input type="submit" value="Logout">
+    </form>
+    {% endif %}
+    </p>
+
+    <h1>Gulasch Push Notifier</h1>
+    {% block body %}{% endblock %}
 </div>
 </body>
 </html>

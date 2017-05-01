@@ -8,3 +8,11 @@ CREATE TABLE notifications
     valid_from TIMESTAMP NOT NULL,
     valid_to TIMESTAMP NOT NULL
 );
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    passhash VARCHAR(255) NOT NULL
+);

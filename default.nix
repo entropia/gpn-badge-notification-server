@@ -6,5 +6,5 @@ in stdenv.mkDerivation rec {
   version = "0.0.1";
   name = "gpn-badge-notification-server-${version}";
   src = ./.;
-  buildInputs = [pypkgs.flask pypkgs.psycopg2];
+  buildInputs = [pypkgs.flask pypkgs.flask_login pypkgs.werkzeug pypkgs.psycopg2];
 }
