@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import flask
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 import json
