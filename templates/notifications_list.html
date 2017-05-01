@@ -19,11 +19,11 @@
 <ul class=entries>
 {% for noti in notifications %}
 <li>
-    <h3>{{ noti.summary|safe }}</h3>
+    <h3>{{ noti.summary }}</h3>
     <em>Valid: {{ noti.valid_from }} - {{ noti.valid_to }}</em><br/>
-    <em>Location: {{ noti.location|safe }}</em>
+    <em>Location: {{ noti.location }}</em>
     <p>
-    {{ noti.description|safe }}
+    {{ noti.description }}
     </p>
     <form action="{{ url_for('delete_notification') }}" method=post>
       <dl>
