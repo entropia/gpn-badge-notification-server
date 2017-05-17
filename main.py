@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import flask
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_login import LoginManager, login_user, logout_user, login_required
-import json
 import time
+import urllib.parse
 from datetime import datetime
 
 from model import *
@@ -67,10 +67,10 @@ def hello():
 
 @app.route("/api/poll")
 def poll():
-    return jsonify({
-        'server_time': int(time.time() * 1000),
-        'notifications': list(map(Notification.to_dict, Notification.get_active_notifications(get_db())))
-    })
+    ret = str(int(time.time() * 1000)) + "\n"
+    for noti in list(map(Notification.to_dict, Notification.get_active_notifications(get_db()))):
+        ret += urllib.parse.urlencode(noti) + '\n'
+    return Response(ret, mimetype='text/plain')
 
 
 date_fmt = '%c'

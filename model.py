@@ -30,8 +30,8 @@ class Notification(json.JSONEncoder):
     def to_dict(self):
         return {
             "id": self.id,
-            "valid_from": self.valid_from,
-            "valid_to": self.valid_to,
+            "valid_from": int(self.valid_from.timestamp()),
+            "valid_to": int(self.valid_to.timestamp()),
             "summary": self.summary,
             "description": self.description,
             "location": self.location,
