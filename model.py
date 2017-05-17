@@ -9,8 +9,10 @@ def open_db():
     db = "dbname=gulasch_notifier"
     return psycopg2.connect(db)
 
+
 def get_cursor(db):
     return db.cursor(cursor_factory=RealDictCursor)
+
 
 def close_db(db):
     db.close()
@@ -27,23 +29,25 @@ class Notification(json.JSONEncoder):
 
     def to_dict(self):
         return {
-                "id": self.id,
-                "valid_from": self.valid_from,
-                "valid_to": self.valid_to,
-                "summary": self.summary,
-                "description": self.description,
-                "location": self.location,
-                }
+            "id": self.id,
+            "valid_from": self.valid_from,
+            "valid_to": self.valid_to,
+            "summary": self.summary,
+            "description": self.description,
+            "location": self.location,
+        }
 
     def insert(self, db):
         with get_cursor(db) as cur:
-            cur.execute("INSERT INTO notifications (summary, description, location, valid_from, valid_to) VALUES (%s, %s, %s, %s, %s) RETURNING id", (self.summary, self.description, self.location, self.valid_from, self.valid_to))
+            cur.execute(
+                "INSERT INTO notifications (summary, description, location, valid_from, valid_to) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                (self.summary, self.description, self.location, self.valid_from, self.valid_to))
             self.id = cur.fetchone()['id']
         db.commit()
 
     def delete(self, db):
         with get_cursor(db) as cur:
-            cur.execute("DELETE FROM notifications WHERE id = %s", (self.id, ))
+            cur.execute("DELETE FROM notifications WHERE id = %s", (self.id,))
         db.commit()
 
     @classmethod
@@ -51,7 +55,9 @@ class Notification(json.JSONEncoder):
         with get_cursor(db) as cur:
             current_time = datetime.now()
             send_earlier = timedelta(seconds=30)
-            cur.execute("SELECT id, summary, description, location, valid_from, valid_to FROM notifications WHERE valid_from < %s AND valid_to > %s", (current_time + send_earlier, current_time))
+            cur.execute(
+                "SELECT id, summary, description, location, valid_from, valid_to FROM notifications WHERE valid_from < %s AND valid_to > %s",
+                (current_time + send_earlier, current_time))
             return map(lambda d: Notification(**d), cur.fetchall())
 
     @classmethod
@@ -59,6 +65,7 @@ class Notification(json.JSONEncoder):
         with get_cursor(db) as cur:
             cur.execute("SELECT id, summary, description, location, valid_from, valid_to FROM notifications")
             return map(lambda d: Notification(**d), cur.fetchall())
+
 
 class User(object):
     def __init__(self, id=None, name=None, passhash=None):
@@ -72,7 +79,7 @@ class User(object):
     @property
     def is_active(self):
         return True
-    
+
     @property
     def is_anonymous(self):
         return False
@@ -86,7 +93,7 @@ class User(object):
         with get_cursor(db) as cur:
             cur.execute("SELECT id, name, passhash FROM users")
             result = cur.fetchall()
-            return map(lambda u:User(**u), result)
+            return map(lambda u: User(**u), result)
 
     @classmethod
     def get_by_id(self, db, id):
@@ -132,7 +139,7 @@ class User(object):
 
     def delete(self, db):
         with get_cursor(db) as cur:
-            cur.execute("DELETE FROM users WHERE id = %s", (self.id, ))
+            cur.execute("DELETE FROM users WHERE id = %s", (self.id,))
         db.commit()
 
     def check_password(self, password):

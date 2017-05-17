@@ -4,7 +4,7 @@ from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required
 import json
 import time
-from datetime import datetime 
+from datetime import datetime
 
 from model import *
 import settings
@@ -15,13 +15,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
     """
     if not hasattr(flask.g, 'db_conn'):
-        flask.g.db_conn = open_db() 
+        flask.g.db_conn = open_db()
     return flask.g.db_conn
+
 
 @app.teardown_appcontext
 def teardown(error):
@@ -29,12 +31,14 @@ def teardown(error):
     if hasattr(flask.g, 'db_conn'):
         close_db(flask.g.db_conn)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     try:
         return User.get_by_id(get_db(), int(user_id))
     except ValueError:
         return None
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,23 +53,28 @@ def login():
     else:
         return flask.render_template('login.html')
 
+
 @app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
     return flask.redirect(flask.url_for('login'))
 
+
 @app.route("/")
 def hello():
     return "Hello World!"
 
+
 @app.route("/api/poll")
 def poll():
     return jsonify({
-                'server_time': int(time.time() * 1000),
-                'notifications': list(map(Notification.to_dict, Notification.get_active_notifications(get_db())))
-            })
+        'server_time': int(time.time() * 1000),
+        'notifications': list(map(Notification.to_dict, Notification.get_active_notifications(get_db())))
+    })
+
 
 date_fmt = '%c'
+
 
 @app.route("/manage")
 @login_required
@@ -74,20 +83,24 @@ def list_notifications():
     now = datetime.now()
     return render_template('notifications_list.html', notifications=notifications, current_time=now.strftime(date_fmt))
 
+
 @app.route("/manage/add", methods=['POST'])
 @login_required
 def new_notification():
     valid_from = datetime.strptime(request.form['valid_from'], date_fmt)
     valid_to = datetime.strptime(request.form['valid_to'], date_fmt)
-    new_notification = Notification(summary=request.form['summary'], description=request.form['description'], valid_from=valid_from, valid_to=valid_to, location=request.form['location'])
+    new_notification = Notification(summary=request.form['summary'], description=request.form['description'],
+                                    valid_from=valid_from, valid_to=valid_to, location=request.form['location'])
     new_notification.insert(get_db())
     return redirect(url_for('list_notifications'))
+
 
 @app.route("/manage/delete", methods=['POST'])
 @login_required
 def delete_notification():
     Notification(id=int(request.form['id'])).delete(get_db())
     return redirect(url_for('list_notifications'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
