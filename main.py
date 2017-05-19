@@ -67,7 +67,7 @@ def hello():
 
 @app.route("/api/poll")
 def poll():
-    ret = str(int(time.time() * 1000)) + "\n"
+    ret = str(int(time.time())) + "\n"
     for noti in list(map(Notification.to_dict, Notification.get_active_notifications(get_db()))):
         ret += urllib.parse.urlencode(noti) + '\n'
     return Response(ret, mimetype='text/plain')
