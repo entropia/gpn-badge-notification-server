@@ -1,1 +1,3 @@
 secret_key = "CHANGEME//TODO//FIXME"
+DEBUG=True
+PORT=5000
