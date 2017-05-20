@@ -4,16 +4,14 @@ from flask import Flask, render_template, request, redirect, url_for, Response, 
 from flask_login import LoginManager, login_user, logout_user, login_required
 import time
 import urllib.parse
-from datetime import datetime
 import requests
 import dateutil.parser
 from pytz import reference
 
 from model import *
-import settings
 
 app = Flask(__name__)
-app.secret_key = settings.secret_key
+app.config.from_pyfile('settings.py')
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -193,4 +191,4 @@ def new_channel():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
