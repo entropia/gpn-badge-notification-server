@@ -5,6 +5,9 @@ from flask_login import LoginManager, login_user, logout_user, login_required
 import time
 import urllib.parse
 from datetime import datetime
+import requests
+import dateutil.parser
+from pytz import reference
 
 from model import *
 import settings
@@ -76,6 +79,69 @@ def poll(channel_url):
     return Response(ret, mimetype='text/plain')
 
 
+@app.route("/api/schedule")
+def schedule_index():
+    ret = ""
+    fp = requests.get("https://entropia.de/GPN17:Fahrplan:JSON?action=raw").json()['schedule']['conference']['days']
+    now = datetime.now().replace(tzinfo=reference.LocalTimezone())
+
+    ##debug
+    # now = now.replace(day=26, hour=1)
+    ##debug
+
+    current_day = None
+    for day in fp:
+        start = dateutil.parser.parse(day['day_start'])
+        end = dateutil.parser.parse(day['day_end'])
+        print(start)
+        print(now)
+        if start <= now <= end:
+            current_day = day
+            break
+    if current_day is None:
+        return "no room today"
+    for r in day['rooms']:
+        ret += r
+        ret += '\n'
+    return Response(ret, mimetype='text/plain')
+
+
+@app.route("/api/schedule/<room>")
+def schedule(room):
+
+    fp = requests.get("https://entropia.de/GPN17:Fahrplan:JSON?action=raw").json()['schedule']['conference']['days']
+    now = datetime.now().replace(tzinfo=reference.LocalTimezone())
+
+    ##debug
+    # now = now.replace(day=26, hour=14)
+    ##debug
+
+    ret = str(int(now.timestamp())) + "\n"
+    current_day = None
+    for day in fp:
+        start = dateutil.parser.parse(day['day_start'])
+        end = dateutil.parser.parse(day['day_end'])
+        if start <= now <= end:
+            current_day = day
+            break
+    if current_day is None:
+        return Response(ret, mimetype='text/plain')
+    if room not in day['rooms']:
+        abort(404)
+    sched = current_day['rooms'][room]
+    for thing in sched:
+        d = dateutil.parser.parse(thing['date'])
+        dur = thing['duration'].split(':')
+        valid_to = d + timedelta(hours=int(dur[0]), minutes=int(dur[1]))
+        if now > valid_to or now < d:
+            continue
+        ret += urllib.parse.urlencode({"id": thing['id'], 'summary': thing['title'], 'description': thing['subtitle'],
+                                       'location': thing['room'],
+                                       'valid_from': int(d.timestamp()),
+                                       'valid_to': int(valid_to.timestamp())}) + '\n'
+    return Response(ret, mimetype='text/plain')
+
+
 date_fmt = '%c'
 
 
@@ -85,7 +151,8 @@ def list_notifications():
     notifications = Notification.get_notifications(get_db())
     channels = list(Channel.get_channels(get_db()))
     now = datetime.now()
-    return render_template('notifications_list.html', notifications=notifications, channels=channels, current_time=now.strftime(date_fmt))
+    return render_template('notifications_list.html', notifications=notifications, channels=channels,
+                           current_time=now.strftime(date_fmt))
 
 
 @app.route("/manage/add", methods=['POST'])
@@ -94,7 +161,8 @@ def new_notification():
     channel_id = int(request.form['channel'])
     valid_from = datetime.strptime(request.form['valid_from'], date_fmt)
     valid_to = datetime.strptime(request.form['valid_to'], date_fmt)
-    new_notification = Notification(channel=channel_id, summary=request.form['summary'], description=request.form['description'],
+    new_notification = Notification(channel=channel_id, summary=request.form['summary'],
+                                    description=request.form['description'],
                                     valid_from=valid_from, valid_to=valid_to, location=request.form['location'])
     new_notification.insert(get_db())
     return redirect(url_for('list_notifications'))
@@ -106,11 +174,13 @@ def delete_notification():
     Notification(id=int(request.form['id'])).delete(get_db())
     return redirect(url_for('list_notifications'))
 
+
 @app.route("/manage/delete_channel", methods=['POST'])
 @login_required
 def delete_channel():
     Channel(id=int(request.form['id'])).delete(get_db())
     return redirect(url_for('list_notifications'))
+
 
 @app.route("/manage/add_channel", methods=['POST'])
 @login_required
@@ -120,6 +190,7 @@ def new_channel():
     new_channel = Channel(display_name=display_name, url=url)
     new_channel.insert(get_db())
     return redirect(url_for('list_notifications'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
