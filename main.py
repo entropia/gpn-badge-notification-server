@@ -106,8 +106,7 @@ def schedule_index():
 
 @app.route("/api/schedule/<room>")
 def schedule(room):
-
-    fp = requests.get("https://entropia.de/GPN17:Fahrplan:JSON?action=raw").json()['schedule']['conference']['days']
+    fp = requests.get(app.config.get('SCHEDULE_JSON')).json()['schedule']['conference']['days']
     now = datetime.now().replace(tzinfo=reference.LocalTimezone())
 
     ##debug
