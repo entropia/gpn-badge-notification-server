@@ -90,7 +90,7 @@ class Notification(json.JSONEncoder):
     def get_active_notifications_by_channel(self, db, channel):
         with get_cursor(db) as cur:
             current_time = datetime.now()
-            send_earlier = timedelta(seconds=30)
+            send_earlier = timedelta(minutes=15)
             cur.execute(
                 "SELECT n.id, n.channel, n.summary, n.description, n.location, n.valid_from, n.valid_to, c.display_name as channel_display_name FROM notifications as n LEFT JOIN channels as c ON n.channel = c.id WHERE n.valid_from < %s AND n.valid_to > %s AND c.id = %s",
                 (current_time + send_earlier, current_time, channel.id))

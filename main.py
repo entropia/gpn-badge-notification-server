@@ -127,10 +127,11 @@ def schedule(room):
         abort(404)
     sched = current_day['rooms'][room]
     for thing in sched:
+        send_earlier = timedelta(minutes=15)
         d = dateutil.parser.parse(thing['date'])
         dur = thing['duration'].split(':')
         valid_to = d + timedelta(hours=int(dur[0]), minutes=int(dur[1]))
-        if now > valid_to or now < d:
+        if now > valid_to or now < (d - send_earlier):
             continue
         ret += urllib.parse.urlencode({"id": thing['id'], 'summary': thing['title'], 'description': thing['subtitle'],
                                        'location': thing['room'],
