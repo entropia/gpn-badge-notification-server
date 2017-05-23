@@ -70,6 +70,7 @@ def hello():
 def poll(channel_url):
     ret = str(int(time.time())) + "\n"
     channel = Channel.get_by_url(get_db(), channel_url)
+    ret += channel.display_name + "\n"
     if channel is None:
         abort(404)
     for noti in list(map(Notification.to_dict, Notification.get_active_notifications_by_channel(get_db(), channel))):
@@ -114,6 +115,7 @@ def schedule(room):
     ##debug
 
     ret = str(int(now.timestamp())) + "\n"
+    ret += room + "\n"
     current_day = None
     for day in fp:
         start = dateutil.parser.parse(day['day_start'])
