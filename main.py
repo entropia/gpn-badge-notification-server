@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
+from functools import wraps
 import flask
 from flask import Flask, render_template, request, redirect, url_for, Response, abort
 from flask_login import LoginManager, login_user, logout_user, login_required
+import flask_login.utils
 import time
 import urllib.parse
 import requests
 import dateutil.parser
 from pytz import reference
+from werkzeug.local import LocalProxy
 
 from model import *
 
@@ -40,6 +43,13 @@ def load_user(user_id):
     except ValueError:
         return None
 
+def requires_admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if flask_login.utils.current_user.is_anonymous or not flask_login.utils.current_user.admin:
+            return login_manager.unauthorized()
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -154,6 +164,27 @@ def list_notifications():
     return render_template('notifications_list.html', notifications=notifications, channels=channels,
                            current_time=now.strftime(date_fmt))
 
+@app.route("/users")
+@requires_admin
+def manage_users():
+    users = User.get_users(get_db())
+    return render_template('users_list.html', users=users)
+
+@app.route("/users/add", methods=['POST'])
+@requires_admin
+def new_user():
+    name = request.form['name']
+    password = request.form['password']
+    new_user = User(name=name)
+    new_user.set_password(password)
+    new_user.insert(get_db())
+    return redirect(url_for('manage_users'))
+
+@app.route("/users/delete", methods=['POST'])
+@requires_admin
+def delete_user():
+    User(id=int(request.form['id'])).delete(get_db())
+    return redirect(url_for('manage_users'))
 
 @app.route("/manage/add", methods=['POST'])
 @login_required

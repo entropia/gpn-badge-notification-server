@@ -105,10 +105,11 @@ class Notification(json.JSONEncoder):
 
 
 class User(object):
-    def __init__(self, id=None, name=None, passhash=None):
+    def __init__(self, id=None, name=None, passhash=None, admin=False):
         self.id = id
         self.name = name
         self.passhash = passhash
+        self.admin = admin
 
     def get_id(self):
         return str(self.id)
@@ -128,28 +129,35 @@ class User(object):
     @classmethod
     def get_all(self, db):
         with get_cursor(db) as cur:
-            cur.execute("SELECT id, name, passhash FROM users")
+            cur.execute("SELECT id, name, passhash, admin FROM users")
             result = cur.fetchall()
             return map(lambda u: User(**u), result)
 
     @classmethod
     def get_by_id(self, db, id):
         with get_cursor(db) as cur:
-            cur.execute("SELECT id, name, passhash FROM users WHERE id=%s", (id,))
+            cur.execute("SELECT id, name, passhash, admin FROM users WHERE id=%s", (id,))
             result = cur.fetchone()
             return User(**result) if result is not None else None
 
     @classmethod
     def get_by_name(self, db, name):
         with get_cursor(db) as cur:
-            cur.execute("SELECT id, name, passhash FROM users WHERE name=%s", (name,))
+            cur.execute("SELECT id, name, passhash, admin FROM users WHERE name=%s", (name,))
             result = cur.fetchone()
             return User(**result) if result is not None else None
 
     @classmethod
+    def get_users(self, db):
+        with get_cursor(db) as cur:
+            cur.execute(
+                "SELECT id, name, passhash, admin FROM users")
+            return map(lambda d: User(**d), cur.fetchall())
+
+    @classmethod
     def get_and_check(self, db, name, password):
         with get_cursor(db) as cur:
-            cur.execute("SELECT id, name, passhash FROM users WHERE name=%s", (name,))
+            cur.execute("SELECT id, name, passhash, admin FROM users WHERE name=%s", (name,))
             result = cur.fetchone()
             if result is not None:
                 user = User(**result)
@@ -165,13 +173,13 @@ class User(object):
 
     def insert(self, db):
         with get_cursor(db) as cur:
-            cur.execute("INSERT INTO users (name, passhash) VALUES (%s, %s) RETURNING id", (self.name, self.passhash))
+            cur.execute("INSERT INTO users (name, passhash, admin) VALUES (%s, %s, %s) RETURNING id", (self.name, self.passhash, self.admin))
             self.id = cur.fetchone()['id']
         db.commit()
 
     def update(self, db):
         with get_cursor(db) as cur:
-            cur.execute("UPDATE users SET name=%s, passhash=%s WHERE id=%s", (self.name, self.passhash, self.id))
+            cur.execute("UPDATE users SET name=%s, passhash=%s, admin=%s WHERE id=%s", (self.name, self.passhash, self.admin, self.id))
         db.commit()
 
     def delete(self, db):

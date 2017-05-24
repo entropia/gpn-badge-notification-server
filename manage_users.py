@@ -12,6 +12,7 @@ def main():
 
     create_parser = subparsers.add_parser('create')
     create_parser.add_argument('name')
+    create_parser.add_argument('--admin', action='store_true')
 
     create_parser = subparsers.add_parser('delete')
     create_parser.add_argument('name')
@@ -20,7 +21,7 @@ def main():
 
     db = open_db()
     if args.subparser_name == 'create':
-        user = User(name=args.name)
+        user = User(name=args.name, admin=args.admin)
         password = getpass.getpass("Enter Password: ")
         password_confirm = getpass.getpass("Confirm Password: ")
         if password == password_confirm:
