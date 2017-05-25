@@ -25,7 +25,7 @@ def get_db():
     current application context.
     """
     if not hasattr(flask.g, 'db_conn'):
-        flask.g.db_conn = open_db()
+        flask.g.db_conn = open_db(app.config.get("db_asn"))
     return flask.g.db_conn
 
 

@@ -5,9 +5,8 @@ from datetime import datetime, timedelta
 import json
 
 
-def open_db():
-    db = "dbname=gulasch_notifier"
-    return psycopg2.connect(db)
+def open_db(asn):
+    return psycopg2.connect(asn)
 
 
 def get_cursor(db):
