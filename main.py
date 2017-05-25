@@ -19,13 +19,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
     """
     if not hasattr(flask.g, 'db_conn'):
-        flask.g.db_conn = open_db(app.config.get("db_asn"))
+        flask.g.db_conn = open_db(app.config.get("DB_ASN"))
     return flask.g.db_conn
 
 
@@ -91,7 +90,7 @@ def poll(channel_url):
 @app.route("/api/schedule")
 def schedule_index():
     ret = ""
-    fp = requests.get("https://entropia.de/GPN17:Fahrplan:JSON?action=raw").json()['schedule']['conference']['days']
+    fp = requests.get(app.config.get('SCHEDULE_JSON')).json()['schedule']['conference']['days']
     now = datetime.now().replace(tzinfo=reference.LocalTimezone())
 
     ##debug
