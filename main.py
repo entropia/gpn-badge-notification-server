@@ -24,7 +24,7 @@ def get_db():
     current application context.
     """
     if not hasattr(flask.g, 'db_conn'):
-        flask.g.db_conn = open_db(app.config.get("DB_ASN"))
+        flask.g.db_conn = open_db(app.config.get("DB_DSN"))
     return flask.g.db_conn
 
 
@@ -94,7 +94,7 @@ def schedule_index():
     now = datetime.now().replace(tzinfo=reference.LocalTimezone())
 
     ##debug
-    # now = now.replace(day=26, hour=1)
+    now = now.replace(day=26, hour=1)
     ##debug
 
     current_day = None
@@ -120,7 +120,7 @@ def schedule(room):
     now = datetime.now().replace(tzinfo=reference.LocalTimezone())
 
     ##debug
-    # now = now.replace(day=26, hour=14)
+    now = now.replace(day=26, hour=14)
     ##debug
 
     ret = str(int(now.timestamp())) + "\n"
