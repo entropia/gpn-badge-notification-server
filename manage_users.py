@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import getpass
+import settings
 
 from model import *
 
@@ -19,7 +20,7 @@ def main():
 
     args = parser.parse_args()
 
-    db = open_db()
+    db = open_db(settings.DB_DSN)
     if args.subparser_name == 'create':
         user = User(name=args.name, admin=args.admin)
         password = getpass.getpass("Enter Password: ")
