@@ -1,0 +1,41 @@
+###################################
+#        Basic Services           #
+#          for arm/rpi            #
+#                                 #
+#    Do not use for Production!   #
+#         J-Ha – @_j_ha           #
+#                                 #
+###################################
+version: '2'
+services:
+  push_python:
+    image: thexero/gpnpush:pi
+    container_name: push_python
+    networks:
+      - badge_push
+
+  push_database:
+    image: zsoltm/postgresql-armhf
+    container_name: push_database
+    networks:
+      - badge_push
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  haproxy:
+    image: hypriot/rpi-haproxy
+    container_name: haproxy
+    volumes:
+      - ./server.pem:/etc/ssl/server.pem
+      - ./haproxy.cfg:/etc/haproxy/haproxy.cfg
+    networks:
+      - badge_push
+    ports:
+      - "80:80"
+      - "443:443"
+
+networks:
+  badge_push:
+    driver: bridge
