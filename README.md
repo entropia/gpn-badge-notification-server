@@ -23,7 +23,7 @@ Note that you need *at least* one of the following ciphers:
 
 ## Docker
 
-Modify settings.py.sample, will be linked as settings.py in the container
+Modify settings.py.docker, will be linked as settings.py in the container
 
 Set Admin password
 ``` docker exec -it push_python /usr/src/app/manage_users.py create --admin admin ```

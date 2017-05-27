@@ -10,7 +10,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN cp settings.py.sample settings.py
+RUN cp settings.py.docker settings.py
 
 EXPOSE 5000
 
