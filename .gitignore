@@ -5,3 +5,4 @@ bin/
 pip-selfcheck.json
 lib/
 include/
+server.pem
