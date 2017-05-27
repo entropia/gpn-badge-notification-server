@@ -50,7 +50,7 @@ def requires_admin(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         user = User.get_and_check(get_db(), request.form['name'], request.form['password'])
@@ -68,12 +68,6 @@ def login():
 def logout():
     logout_user()
     return flask.redirect(flask.url_for('login'))
-
-
-@app.route("/")
-def hello():
-    return "Hello World!"
-
 
 @app.route("/api/channel/<channel_url>")
 def poll(channel_url):
