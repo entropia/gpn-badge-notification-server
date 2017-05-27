@@ -6,7 +6,7 @@
   <dl>
       <dt>Display name:</dt>
       <dd><input type="text" size=30 name="display_name"></dd>
-      <dt>Url:</dt>
+      <dt>URL <code>(/api/channel/&lt;URL&gt;)</code>:</dt>
       <dd><input type="text" size=30 name="url"></dd>
       <dd><input type="submit" value="Add"></dd>
   </dl>
@@ -45,7 +45,7 @@
       <dt>Valid from:</dt>
       <dd><input type="text" size=30 name="valid_from" value="{{ current_time }}"></dd>
       <dt>Valid to:</dt>
-      <dd><input type="text" size=30 name="valid_to" value="{{ current_time }}"></dd>
+      <dd><input type="text" size=30 name="valid_to" value="{{ next_time }}"></dd>
       <dd><input type="submit" value="Add"></dd>
   </dl>
 </form>

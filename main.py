@@ -8,9 +8,9 @@ import time
 import urllib.parse
 import requests
 import dateutil.parser
+from dateutil.relativedelta import *
 from pytz import reference
 from werkzeug.local import LocalProxy
-
 from model import *
 
 app = Flask(__name__)
@@ -64,7 +64,7 @@ def login():
         return flask.render_template('login.html')
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout')
 def logout():
     logout_user()
     return flask.redirect(flask.url_for('login'))
@@ -155,7 +155,7 @@ def list_notifications():
     channels = list(Channel.get_channels(get_db()))
     now = datetime.now()
     return render_template('notifications_list.html', notifications=notifications, channels=channels,
-                           current_time=now.strftime(date_fmt))
+                           current_time=now.strftime(date_fmt), next_time=(now+relativedelta(hours=1)).strftime(date_fmt))
 
 @app.route("/users")
 @requires_admin
@@ -214,6 +214,10 @@ def new_channel():
     new_channel = Channel(display_name=display_name, url=url)
     new_channel.insert(get_db())
     return redirect(url_for('list_notifications'))
+
+@app.before_request
+def log_request_info():
+    app.logger.debug('Headers: %s', request.headers)
 
 
 if __name__ == "__main__":
