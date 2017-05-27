@@ -12,7 +12,7 @@ You can use python3's virtualenv to deploy the server.
 3. ```ip install -r requirements.txt```
 4. Proceed with regular setup
 
-## Secutity
+## Security
 To use this server with your GPN17 Badge you need to configure a reverse proxy (for example nginx) with a working TLS setup.
 Note that you need *at least* one of the following ciphers:
 - ```TLS_RSA_AES128_CBC_SHA```
