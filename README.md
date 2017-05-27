@@ -9,7 +9,7 @@
 You can use python3's virtualenv to deploy the server.
 1. ```virtualenv .```
 2. ```source bin/activate```
-3. ```ip install -r requirements.txt```
+3. ```pip install -r requirements.txt```
 4. Proceed with regular setup
 
 ## Security
