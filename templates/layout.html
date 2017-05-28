@@ -2,20 +2,21 @@
 <html>
 <head>
 <title>Gulasch Push Notifier</title>
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Archivo+Narrow|Oswald" rel="stylesheet">
 </head>
 <body>
 <div class=page>
-    <p>
+    <img src="{{ url_for('static', filename='logo.png') }}">
     {% if current_user.is_authenticated %}
+    <div class=user>
     Hi {{ current_user.name }}!
-
-    <form action="{{ url_for('logout') }}" method=post>
-        <input type="submit" value="Logout">
-    </form>
+    <nav>
+          | <a href="{{ url_for('list_notifications') }}">manage</a> | <a href="{{ url_for('manage_users') }}">users</a> | <a href="{{ url_for('logout') }}">logout</a> |
+    </nav>
+    </div>
     {% endif %}
-    </p>
-
     <h1>Gulasch Push Notifier</h1>
     {% block body %}{% endblock %}
 </div>
