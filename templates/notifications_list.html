@@ -1,31 +1,29 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h2>Channels</h2>
+<h2>Create Channel :</h2><br>
 <form action="{{ url_for('new_channel') }}" method=post>
-  <dl>
-      <dt>Display name:</dt>
+      <dt>Channel Name:</dt>
       <dd><input type="text" size=30 name="display_name"></dd>
-      <dt>URL <code>(/api/channel/&lt;URL&gt;)</code>:</dt>
+      <dt>URL: <code>/api/channel/&lt;URL&gt;</code></dt>
       <dd><input type="text" size=30 name="url"></dd>
-      <dd><input type="submit" value="Add"></dd>
-  </dl>
+      <input type="submit" value="Add">
 </form>
 
-<ul>
+<h2>Active Channels :</h2><br>
 {% for channel in channels %}
-<li>{{ channel.display_name }}<br/>Url: {{ channel.url }}
+Channel Name: <code>{{ channel.display_name }}</code><br>
+URL: <code>/api/channel/{{ channel.url }}</code>
   <form action="{{ url_for('delete_channel') }}" method=post>
     <dl>
         <input type="hidden" name="id" value="{{ channel.id }}">
-        <dd><input type="submit" value="Delete"></dd>
+        <input type="submit" value="Delete">
     </dl>
   </form>
-</li>
 {% endfor %}
-</ul>
 
-<h2>Notification List</h2>
+
+<h2>Create Notification :</h2>
 <form action="{{ url_for('new_notification') }}" method=post>
   <dl>
       <dt>Channel:</dt>
@@ -36,7 +34,7 @@
           {% endfor %}
         </select>
       </dd>
-      <dt>Summary:</dt>
+      <dt>Display Name:</dt>
       <dd><input type="text" size=30 name="summary"></dd>
       <dt>Description:</dt>
       <dd><textarea name="description" rows=5 cols=40></textarea></dd>
@@ -46,27 +44,28 @@
       <dd><input type="text" size=30 name="valid_from" value="{{ current_time }}"></dd>
       <dt>Valid to:</dt>
       <dd><input type="text" size=30 name="valid_to" value="{{ next_time }}"></dd>
-      <dd><input type="submit" value="Add"></dd>
+      <input type="submit" value="Add">
   </dl>
 </form>
 <ul class=entries>
+<h2>Current Notifications :</h2>
 {% for noti in notifications %}
 <li>
-  <h3>{{ noti.channel_display_name }}: {{ noti.summary }}</h3>
-    <em>Valid: {{ noti.valid_from }} - {{ noti.valid_to }}</em><br/>
-    <em>Location: {{ noti.location }}</em>
+  <h3>{{ noti.channel_display_name }} – {{ noti.summary }}</h3>
+    <em>Valid: <code>{{ noti.valid_from }} - {{ noti.valid_to }}</code></em><br/>
+    <em>Location: <code>@{{ noti.location }}</code></em>
     <p>
-    {{ noti.description }}
+    <em>Message:<br><code>{{ noti.description }}</code></em>
     </p>
     <form action="{{ url_for('delete_notification') }}" method=post>
       <dl>
           <input type="hidden" name="id" value="{{ noti.id }}">
-          <dd><input type="submit" value="Delete"></dd>
+          <input type="submit" value="Delete">
       </dl>
     </form>
 </li>
 {% else %}
-<li><em>Unbelievable.  No notifications so far</em></li>
+<li><em> <code>Unbelievable.  No notifications so far</code>  </em></li>
 {% endfor %}
 </ul>
 {% endblock %}

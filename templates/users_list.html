@@ -1,28 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h2>Users</h2>
+<h2>User Creation :</h2>
 <form action="{{ url_for('new_user') }}" method=post>
   <dl>
-      <dt>Name:</dt>
+      <dt>Username:</dt>
       <dd><input type="text" size=30 name="name"></dd>
       <dt>Password:</dt>
       <dd><input type="password" size=30 name="password"></dd>
-      <dd><input type="submit" value="Add"></dd>
+      <input type="submit" value="Add">
   </dl>
 </form>
 
-<ul>
+<h2>Users :</h2>
 {% for user in users %}
-<li>{{ user.name }}<br/>Admin: {{ user.admin }}
+Username: <code>&nbsp;{{ user.name }}&nbsp;</code><br>
+Admin Status: <code>&nbsp;{{ user.admin }}&nbsp;</code>
   <form action="{{ url_for('delete_user') }}" method=post>
-    <dl>
+
         <input type="hidden" name="id" value="{{ user.id }}">
-        <dd><input type="submit" value="Delete"></dd>
-    </dl>
+        <input type="submit" value="Delete">
   </form>
-</li>
+
 {% endfor %}
-</ul>
 
 {% endblock %}
