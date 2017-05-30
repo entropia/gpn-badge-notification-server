@@ -35,4 +35,4 @@ start the Stack with
 - ```docker exec -it push_database psql -d postgres -U postgres -f /docker-entrypoint-initdb.d/schema.sql ```
 
 Set Admin password
-``` docker exec -it push_python /usr/src/app/manage_users.py create --admin admin ```
+- ``` docker exec -it push_python /usr/src/app/manage_users.py create --admin admin ```
