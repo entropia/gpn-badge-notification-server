@@ -25,5 +25,14 @@ Note that you need *at least* one of the following ciphers:
 
 Modify settings.py.docker, will be linked as settings.py in the container
 
+Create a SSL cert for your domain (selfsign or LetsEncrypt) - name the file server.pem.
+
+start the Stack with 
+```docker-compose up ```
+
+(only for the RPI docker-stack)
+- import the sql in the postgres database
+- ```docker exec -it push_database psql -d postgres -U postgres -f /docker-entrypoint-initdb.d/schema.sql ```
+
 Set Admin password
 ``` docker exec -it push_python /usr/src/app/manage_users.py create --admin admin ```
