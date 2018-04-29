@@ -1,21 +1,21 @@
-###################################
-#        Basic Services           #
-#          for arm/rpi            #
-#                                 #
-#    Do not use for Production!   #
-#         J-Ha – @_j_ha           #
-#                                 #
-###################################
-version: '2'
+version: '3'
 services:
   push_python:
-    image: thexero/gpnpush:pi
+    image: j-ha/gpnpush:pi
     container_name: push_python
     networks:
       - badge_push
+    volumes:
+      - ./settings.py.docker:/usr/src/app/settings.py
+    labels:
+      traefik.backend: 'gpnpush'
+      traefik.docker.network: 'badge_push'
+      traefik.frontend.rule: 'Host:gulasch.localhost'
+      traefik.enable: 'true'
+      traefik.port: '5000'
 
   push_database:
-    image: zsoltm/postgresql-armhf
+    image: armhf/postgres
     container_name: push_database
     networks:
       - badge_push
@@ -23,18 +23,26 @@ services:
       - POSTGRES_PASSWORD=mysecretpassword
     volumes:
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    labels:
+      traefik.enable: 'false'
 
-  haproxy:
-    image: hypriot/rpi-haproxy
-    container_name: haproxy
-    volumes:
-      - ./server.pem:/etc/ssl/server.pem
-      - ./haproxy.cfg:/etc/haproxy/haproxy.cfg
-    networks:
-      - badge_push
+  traefik:
+    image: traefik
+    command: --docker --InsecureSkipVerify=true
+    container_name: traefik
     ports:
       - "80:80"
       - "443:443"
+    networks:
+      - badge_push
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      #- ./traefik.toml:/traefik.toml
+      #- ./certs:/certs
+    labels:
+      traefik.enable: 'false'
+
 
 networks:
   badge_push:

@@ -1,4 +1,5 @@
-FROM python:alpine
+
+FROM arm64v8/python:alpine3.7
 
 RUN apk add -U python3-dev postgresql-dev gcc musl-dev
 

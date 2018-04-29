@@ -1,0 +1,14 @@
+settings.*
+.idea/
+__pycache__/
+bin/
+pip-selfcheck.json
+lib/
+include/
+server.pem
+haproxy.cfg
+docker-compose*
+schema.sql
+README.md
+Dockerfile
+.dockerignore
