@@ -24,15 +24,26 @@ Note that you need *at least* one of the following ciphers:
 ## Docker
 
 Modify settings.py.docker, will be linked as settings.py in the container
+copy the traefik.sample.toml to traefik.toml
+```cp traefik.sample.toml traefik.toml```
 
 Create a SSL cert for your domain (selfsign or LetsEncrypt) - name the file server.pem.
 
-start the Stack with 
-```docker-compose up ```
+You can use Tools like acme.sh.
+<https://github.com/Neilpang/acme.sh>
 
-(only for the RPI docker-stack)
-- import the sql in the postgres database
-- ```docker exec -it push_database psql -d postgres -U postgres -f /docker-entrypoint-initdb.d/schema.sql ```
+Place Your Certfiles in the certs/ folder
+edit the Traefik.toml.
+
+or use the Traefik Build in Let's Encrypt tool. 
+Edit the Traefik.toml:
+<https://docs.traefik.io/configuration/acme/>
+
+start the Docker-Stack 
+```docker-compose up -d ```
+
+start  the RPI Docker-Stack
+```docker-compose -f docker-compose-rpi.yaml up -d ```
 
 Set Admin password
 - ``` docker exec -it push_python /usr/src/app/manage_users.py create --admin admin ```

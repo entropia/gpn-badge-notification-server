@@ -1,7 +1,7 @@
 version: '3'
 services:
   push_python:
-    image: j-ha/gpnpush:latest
+    image: jha1/gpnpush:pi
     container_name: push_python
     networks:
       - badge_push
@@ -10,7 +10,7 @@ services:
     labels:
       traefik.backend: 'gpnpush'
       traefik.docker.network: 'badge_push'
-      traefik.frontend.rule: 'Host:gulasch.localhost'
+      traefik.frontend.rule: 'Host:badge.dafuq.wtf'
       traefik.enable: 'true'
       traefik.port: '5000'
 
@@ -38,8 +38,8 @@ services:
       - default
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      #- ./traefik.toml:/traefik.toml
-      #- ./certs:/certs
+      - ./traefik.toml:/traefik.toml
+      - ./certs:/certs
     labels:
       traefik.enable: 'false'
 
